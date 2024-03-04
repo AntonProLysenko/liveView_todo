@@ -25,8 +25,27 @@ import topbar from "../vendor/topbar"
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken}
+  params: {_csrf_token: csrfToken}, 
+  hooks: Hooks
 })
+
+function focusInput(input) {
+  // add the focus to the input and place the cursor at the end of the text.
+  let end = input.value.length;
+  input.setSelectionRange(end, end);
+  input.focus();
+}
+
+
+let Hooks = {}
+Hooks.FocusInputItem = {
+  mounted() {
+    focusInput(document.getElementById("update_todo"));
+  },
+  updated() {
+    focusInput(document.getElementById("update_todo"));
+  }
+}
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})

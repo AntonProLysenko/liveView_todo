@@ -18,7 +18,20 @@
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list">
       <%= for item <- @items do %>
-      <!-- <%= if item.status !== 2 do%> -->
+      <%= if item.id == @editing do %>
+        <form phx-submit="update-item" id="form-update">
+          <input
+            id="update_todo"
+            class="new-todo"
+            type="text"
+            name="text"
+            required="required"
+            value={item.text}
+            phx-hook="FocusInputItem"
+          />
+          <input type="hidden" name="id" value={item.id}/>
+        </form>
+      <% else %>
       <li data-id={item.id} class={completed?(item)}>
         <div class="view">
           <%= if checked?(item) do %>
@@ -26,12 +39,12 @@
           <% else %>
             <input class="toggle" type="checkbox" phx-value-id={item.id} phx-click="toggle" />
           <% end %>
-          <label><%= item.text %></label>
+          <label phx-click="edit-item" phx-value-id={item.id}><%= item.text %></label>
           <button class="destroy" phx-click="delete" phx-value-id={item.id}></button>
         </div>
       </li>
-      <!-- <% end %>-->
       <% end %>
+    <% end %>
   </ul>
   </section>
   <footer class="footer" style="display: block;">

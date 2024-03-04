@@ -52,6 +52,22 @@ defmodule LiveViewTodoWeb.PageLive do
     {:noreply, socket}
   end
 
+
+  @impl true
+  def handle_event("edit-item", data, socket) do
+    {:noreply, assign(socket, editing: String.to_integer(data["id"]))}
+  end
+
+  @impl true
+  def handle_event("update-item", %{"id" => item_id, "text" => text}, socket) do
+    current_item = Item.get_item!(item_id)
+    Item.update_item(current_item, %{text: text})
+    items = Item.list_items()
+    socket = assign(socket, items: items, editing: nil)
+    LiveViewTodoWeb.Endpoint.broadcast_from(self(), @topic, "update", socket.assigns)
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_info(%{event: "update", payload: %{items: items}}, socket) do
     {:noreply, assign(socket, items: items)}
