@@ -1,6 +1,7 @@
 defmodule LiveViewTodoWeb.PageLiveTest do
   use LiveViewTodoWeb.ConnCase
   import Phoenix.LiveViewTest
+  alias LiveViewTodo.Item #importing Items to test them
 
   test "disconnected and connected mount", %{conn: conn} do
     {:ok, page_live, disconnected_html} = live(conn, "/")
@@ -11,5 +12,17 @@ defmodule LiveViewTodoWeb.PageLiveTest do
   test "connect and create a todo item", %{conn: conn} do
     {:ok, view, _html} = live(conn, "/")
     assert render_submit(view, :create, %{"text" => "Learn Elixir"}) =~ "Learn Elixir"
+  end
+
+
+  test "toggle an item", %{conn: conn} do
+    {:ok, item} = Item.create_item(%{"text" => "Learn Elixir"})
+    assert item.status == 0
+
+    {:ok, view, _html} = live(conn, "/")
+    assert render_click(view, :toggle, %{"id" => item.id, "value" => 1}) =~ "completed"
+
+    updated_item = Item.get_item!(item.id)
+    assert updated_item.status == 1
   end
  end

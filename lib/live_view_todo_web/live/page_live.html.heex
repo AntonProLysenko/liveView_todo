@@ -17,9 +17,7 @@
     <input id="toggle-all" class="toggle-all" type="checkbox" />
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list">
-
       <%= for item <- @items do %>
-
         <li data-id={item.id} class={completed?(item)}>
         <div class="view">
           <%= if checked?(item) do %>
