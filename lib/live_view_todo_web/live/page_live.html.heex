@@ -17,21 +17,22 @@
     <input id="toggle-all" class="toggle-all" type="checkbox" />
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list">
-      <li data-id="1590167947253" class="">
+
+      <%= for item <- @items do %>
+
+        <li data-id={item.id} class={completed?(item)}>
         <div class="view">
-          <input class="toggle" type="checkbox" />
-          <label>Learn how to build a Todo list in Phoenix LiveView</label>
-          <button class="destroy"></button>
+          <%= if checked?(item) do %>
+            <input class="toggle" type="checkbox" phx-value-id={item.id} phx-click="toggle" checked />
+          <% else %>
+            <input class="toggle" type="checkbox" phx-value-id={item.id} phx-click="toggle" />
+          <% end %>
+          <label><%= item.text %></label>
+          <button class="destroy" phx-click="delete" phx-value-id={item.id}></button>
         </div>
       </li>
-      <li data-id="1590167956628" class="completed">
-        <div class="view">
-          <input class="toggle" type="checkbox" />
-          <label>Completed item</label>
-          <button class="destroy"></button>
-        </div>
-      </li>
-    </ul>
+      <% end %>
+  </ul>
   </section>
   <footer class="footer" style="display: block;">
     <span class="todo-count"><strong>1</strong> item left</span>
