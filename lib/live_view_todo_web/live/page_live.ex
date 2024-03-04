@@ -20,7 +20,7 @@ defmodule LiveViewTodoWeb.PageLive do
     if connected?(socket), do: LiveViewTodoWeb.Endpoint.subscribe(@topic)
     #adding Items to assigns
 
-    {:ok, assign(socket, items: get_all_sorted_items(), editing: nil, tab: "all")}# socket is a liveView Socket that passes the endpoint for liveView todo web
+    {:ok, assign(socket, items: Item.list_items(), editing: nil, tab: "all")}# socket is a liveView Socket that passes the endpoint for liveView todo web
   end
 
   @impl true
@@ -37,11 +37,20 @@ defmodule LiveViewTodoWeb.PageLive do
     item = Item.get_item!(Map.get(data, "id"))
 
     Item.update_item(item, %{id: item.id, status: status})
-    socket = assign(socket, items: get_all_sorted_items(), active: %Item{})
+    socket = assign(socket, items: Item.list_items(), active: %Item{})
     LiveViewTodoWeb.Endpoint.broadcast(@topic, "update", socket.assigns)
     {:noreply, socket}
   end
 
+
+
+  @impl true
+  def handle_event("delete", data, socket) do
+    Item.delete_item(Map.get(data, "id"))
+    socket = assign(socket, items: Item.list_items(), active: %Item{})
+    LiveViewTodoWeb.Endpoint.broadcast(@topic, "update", socket.assigns)
+    {:noreply, socket}
+  end
 
   @impl true
   def handle_info(%{event: "update", payload: %{items: items}}, socket) do

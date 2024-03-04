@@ -25,4 +25,22 @@ defmodule LiveViewTodoWeb.PageLiveTest do
     updated_item = Item.get_item!(item.id)
     assert updated_item.status == 1
   end
+
+
+  test "delete_item/1 soft-deletes an item" do
+    {:ok, item} = Item.create_item(%{"text" => "Learn Elixir"})
+    assert {:ok, %Item{} = deleted_item} = Item.delete_item(item.id)
+    assert deleted_item.status == 2
+  end
+
+  test "delete an item", %{conn: conn} do
+    {:ok, item} = Item.create_item(%{"text" => "Learn Elixir"})
+    assert item.status == 0
+
+    {:ok, view, _html} = live(conn, "/")
+    assert render_click(view, :delete, %{"id" => item.id})
+
+    updated_item = Item.get_item!(item.id)
+    assert updated_item.status == 2
+  end
  end

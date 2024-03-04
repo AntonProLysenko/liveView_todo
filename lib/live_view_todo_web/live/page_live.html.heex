@@ -18,7 +18,8 @@
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list">
       <%= for item <- @items do %>
-        <li data-id={item.id} class={completed?(item)}>
+      <!-- <%= if item.status !== 2 do%> -->
+      <li data-id={item.id} class={completed?(item)}>
         <div class="view">
           <%= if checked?(item) do %>
             <input class="toggle" type="checkbox" phx-value-id={item.id} phx-click="toggle" checked />
@@ -29,11 +30,22 @@
           <button class="destroy" phx-click="delete" phx-value-id={item.id}></button>
         </div>
       </li>
+      <!-- <% end %>-->
       <% end %>
   </ul>
   </section>
   <footer class="footer" style="display: block;">
-    <span class="todo-count"><strong>1</strong> item left</span>
+    <span class="todo-count">
+      <strong>
+        <%= Enum.count(Enum.filter(@items, fn i -> i.status ==0 end)) %>
+      </strong>
+      <%= if Enum.count(Enum.filter(@items, fn i -> i.status ==0 end)) == 1 do %>
+        item
+      <% else %>
+        items
+      <% end %>
+      left
+    </span>
     <ul class="filters">
       <li>
         <a href="#/" class="selected">All</a>
