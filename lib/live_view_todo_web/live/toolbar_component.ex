@@ -1,7 +1,8 @@
 defmodule LiveViewTodoWeb.ToolbarComponent do
   use LiveViewTodoWeb, :live_component
-  # alias LiveViewAppWeb.Router.Helpers, as: Routes
+  alias LiveViewTodo.Item
 
+  @topic "live"
 
   attr(:tab, :string, default: "all")
   attr(:items, :list, default: [])
@@ -46,11 +47,22 @@ defmodule LiveViewTodoWeb.ToolbarComponent do
           </.link>
         </li>
       </ul>
-        <button class="clear-completed" style="display: block;" phx-click="clear-completed">
+        <button class="clear-completed" style="display: block;" phx-target={@myself} phx-click="clear-completed">
           Clear completed
         </button>
       </footer>
     """
+  end
+
+
+
+  @impl true
+  def handle_event("clear-completed", _data, socket) do
+    Item.clear_completed()
+    items = Item.list_items()
+    socket = assign(socket, items: items, active: %Item{})
+    LiveViewTodoWeb.Endpoint.broadcast(@topic, "update", socket.assigns)
+    {:noreply, socket}
   end
 
 end
