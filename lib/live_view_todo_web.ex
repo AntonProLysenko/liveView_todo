@@ -21,7 +21,7 @@ defmodule LiveViewTodoWeb do
 
   def router do
     quote do
-      use Phoenix.Router, helpers: false
+      use Phoenix.Router, helpers: true
 
       # Import common connection and controller functions to use in pipelines
       import Plug.Conn
@@ -44,6 +44,7 @@ defmodule LiveViewTodoWeb do
 
       import Plug.Conn
       import LiveViewTodoWeb.Gettext
+      alias LiveViewTodoWeb.Router.Helpers, as: Routes
 
       unquote(verified_routes())
     end
@@ -53,7 +54,7 @@ defmodule LiveViewTodoWeb do
     quote do
       use Phoenix.LiveView,
         layout: {LiveViewTodoWeb.Layouts, :app}
-
+      alias LiveViewTodoWeb.Router.Helpers, as: Routes
       unquote(html_helpers())
     end
   end

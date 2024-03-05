@@ -68,6 +68,26 @@ defmodule LiveViewTodoWeb.PageLive do
     {:noreply, socket}
   end
 
+
+
+  @impl true
+  def handle_params(params, _url, socket) do
+    items = Item.list_items()
+
+    case params["filter_by"] do
+      "completed" ->
+        completed = Enum.filter(items, &(&1.status == 1))
+        {:noreply, assign(socket, items: completed, tab: "completed")}
+
+      "active" ->
+        active = Enum.filter(items, &(&1.status == 0))
+        {:noreply, assign(socket, items: active, tab: "active")}
+
+      _ ->
+        {:noreply, assign(socket, items: items, tab: "all")}
+    end
+  end
+
   @impl true
   def handle_info(%{event: "update", payload: %{items: items}}, socket) do
     {:noreply, assign(socket, items: items)}

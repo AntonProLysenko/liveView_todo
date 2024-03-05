@@ -18,6 +18,7 @@
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list">
       <%= for item <- @items do %>
+      <%= if item.status != 2 do %>
       <%= if item.id == @editing do %>
         <form phx-submit="update-item" id="form-update">
           <input
@@ -44,6 +45,7 @@
         </div>
       </li>
       <% end %>
+      <% end %>
     <% end %>
   </ul>
   </section>
@@ -59,17 +61,32 @@
       <% end %>
       left
     </span>
-    <ul class="filters">
-      <li>
-        <a href="#/" class="selected">All</a>
-      </li>
-      <li>
-        <a href="#/active">Active</a>
-      </li>
-      <li>
-        <a href="#/completed">Completed</a>
-      </li>
-    </ul>
+   <ul class="filters">
+    <li>
+      <.link
+        class={if @tab == "all", do: "selected", else: ""}
+        patch={Routes.live_path(@socket, LiveViewTodoWeb.PageLive, %{filter_by: "all"})}
+      >
+        All
+      </.link>
+    </li>
+    <li>
+      <.link
+        class={if @tab == "active", do: "selected", else: ""}
+        patch={Routes.live_path(@socket, LiveViewTodoWeb.PageLive, %{filter_by: "active"})}
+      >
+        Active
+      </.link>
+    </li>
+    <li>
+      <.link
+        class={if @tab == "completed", do: "selected", else: ""}
+        patch={LiveViewTodoWeb.Router.Helpers.live_path(@socket, LiveViewTodoWeb.PageLive, %{filter_by: "completed"})}
+      >
+        Completed
+      </.link>
+    </li>
+  </ul>
     <button class="clear-completed" style="display: block;">
       Clear completed
     </button>
