@@ -62,7 +62,7 @@ defmodule LiveViewTodoWeb do
   def live_component do
     quote do
       use Phoenix.LiveComponent
-
+      alias LiveViewTodoWeb.Router.Helpers, as: Routes
       unquote(html_helpers())
     end
   end
