@@ -3,6 +3,7 @@ defmodule LiveViewTodo.Item do
   # this command also creates the migration file for our db
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   alias LiveViewTodo.Repo
   alias __MODULE__
 
@@ -70,8 +71,15 @@ Returns the list of items.
     [%Item{}, ...]
 
 """
+# def list_items do
+#   Repo.all(Item)
+# end
+
 def list_items do
-  Repo.all(Item)
+  Item
+  |> order_by(desc: :inserted_at)
+  # |> where([a], is_nil(a.status) or a.status != 2)
+  |> Repo.all()
 end
 
 @doc """
@@ -104,4 +112,10 @@ end
 #   |> Item.changeset(%{status: 2})
 #   |> Repo.delete()
 # end
+
+def clear_completed() do
+  completed_items = from(i in Item, where: i.status == 1)
+  Repo.update_all(completed_items, set: [status: 2])
+end
+
 end

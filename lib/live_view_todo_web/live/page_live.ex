@@ -68,6 +68,12 @@ defmodule LiveViewTodoWeb.PageLive do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_event("clear-completed", _data, socket) do
+    Item.clear_completed()
+    items = Item.list_items()
+    {:noreply, assign(socket, items: items)}
+  end
 
 
   @impl true

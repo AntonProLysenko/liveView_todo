@@ -79,15 +79,12 @@
       </.link>
     </li>
     <li>
-      <.link
-        class={if @tab == "completed", do: "selected", else: ""}
-        patch={LiveViewTodoWeb.Router.Helpers.live_path(@socket, LiveViewTodoWeb.PageLive, %{filter_by: "completed"})}
-      >
+      <.link class={if @tab == "completed", do: "selected", else: ""} patch={LiveViewTodoWeb.Router.Helpers.live_path(@socket, LiveViewTodoWeb.PageLive, %{filter_by: "completed"})}>
         Completed
       </.link>
     </li>
   </ul>
-    <button class="clear-completed" style="display: block;">
+    <button class="clear-completed" style="display: block;" phx-click="clear-completed">
       Clear completed
     </button>
   </footer>
