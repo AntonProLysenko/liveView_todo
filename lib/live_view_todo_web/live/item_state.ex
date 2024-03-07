@@ -17,6 +17,10 @@ defmodule LiveViewTodoWeb.ItemState do
     GenServer.call(@name, {:toggle, data})
   end
 
+  def create(text)do
+    GenServer.call(@name, {:create, text})
+  end
+
   #IMPL
 
   @impl true
@@ -34,6 +38,17 @@ defmodule LiveViewTodoWeb.ItemState do
 
     PubSub.broadcast(LiveViewTodo.PubSub, topic(), {:items, updated_items})
     {:reply, items, updated_items}
+  end
+
+  @impl true
+  def handle_call({:create, text},_from, _socket) do
+
+    Item.create_item(%{text: text})
+    socket = Item.list_items()
+    PubSub.broadcast(LiveViewTodo.PubSub, topic(), {:items, socket})
+    # PubSub.broadcast(LiveViewTodo.PubSub, @topic, socket.assigns)
+    {:reply, socket, socket}
+
   end
 
   defp update_and_fetch(id, new_status, items) do

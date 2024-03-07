@@ -27,11 +27,11 @@ defmodule LiveViewTodoWeb.PageLive do
 
   @impl true
   def handle_event("create", %{"text" => text}, socket) do
-    Item.create_item(%{text: text})
-    socket = assign(socket, items: Item.list_items(), active: %Item{})
-    LiveViewTodoWeb.Endpoint.broadcast_from(self(), @topic, "update", socket.assigns)
+    # Item.create_item(%{text: text})
+    # socket = assign(socket, items: Item.list_items(), active: %Item{})
+    # LiveViewTodoWeb.Endpoint.broadcast_from(self(), @topic, "update", socket.assigns)
     # PubSub.broadcast(LiveViewTodo.PubSub, @topic, socket.assigns)
-    {:noreply, socket}
+    {:noreply, assign(socket, :items, ItemState.create(text))}
   end
 
   @impl true
