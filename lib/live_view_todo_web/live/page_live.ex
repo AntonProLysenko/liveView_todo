@@ -28,9 +28,9 @@ defmodule LiveViewTodoWeb.PageLive do
   @impl true
   def handle_event("create", %{"text" => text}, socket) do
     Item.create_item(%{text: text})
-    socket = assign(socket, items: get_all_sorted_items(), active: %Item{})
+    socket = assign(socket, items: Item.list_items(), active: %Item{})
     LiveViewTodoWeb.Endpoint.broadcast_from(self(), @topic, "update", socket.assigns)
-    PubSub.broadcast(LiveViewTodo.PubSub, @topic, socket.assigns)
+    # PubSub.broadcast(LiveViewTodo.PubSub, @topic, socket.assigns)
     {:noreply, socket}
   end
 
@@ -74,13 +74,6 @@ defmodule LiveViewTodoWeb.PageLive do
   def handle_info({:items, items}, socket) do
     {:noreply, assign(socket, items: items)}
   end
-
-  # def handle_info({:active, item, :items, items}, socket) do
-  #   {:noreply, assign(socket, items: items)}
-  # end
-  def handle_info(%{event: "update", payload: %{active: item, items: items}}, socket) do
-    {:noreply, assign(socket, items: items)}
-  end
   @impl true
   def handle_info(%{event: "update", payload: %{items: items}}, socket) do
     {:noreply, assign(socket, items: items)}
@@ -90,8 +83,8 @@ defmodule LiveViewTodoWeb.PageLive do
 
 
 
-  defp get_all_sorted_items() do
-    Enum.sort_by(Item.list_items(), &Map.fetch(&1, :inserted_at), :desc)
-  end
+  # defp get_all_sorted_items() do
+  #   Enum.sort_by(Item.list_items(), &Map.fetch(&1, :inserted_at), :desc)
+  # end
 
 end

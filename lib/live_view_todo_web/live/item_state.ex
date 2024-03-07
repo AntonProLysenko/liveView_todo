@@ -30,20 +30,21 @@ defmodule LiveViewTodoWeb.ItemState do
   def handle_call({:toggle, data}, _from, items) do
     status = if Map.has_key?(data, "value"), do: 1, else: 0
 
-    updated_items =
-      Enum.map(items, fn item ->
-        if to_string(item.id) == data["id"] do
-          Item.update_item(item, %{id: item.id, status: status})
-          IO.inspect(item, label: "Found")
-          Map.replace(item, :status, status)
-          |> IO.inspect(label: "replaced")
-        else
-          item
-        end
-      end)
-      # IO.inspect("MAYBE HERE??????")
-    PubSub.broadcast(LiveViewTodo.PubSub, topic(), {:items, Item.list_items()})
-    {:reply, updated_items, Item.list_items()}
+    updated_items = update_and_fetch(data["id"], status, items)
+
+    PubSub.broadcast(LiveViewTodo.PubSub, topic(), {:items, updated_items})
+    {:reply, items, updated_items}
+  end
+
+  defp update_and_fetch(id, new_status, items) do
+    item = Enum.find(items, fn item ->
+      to_string(item.id) == id
+    end)
+    Item.update_item(item, %{id: id, status: new_status})
+    Item.list_items()
+        # IO.inspect(item, label: "Found")
+        # Map.replace(item, :status, status)
+        # |> IO.inspect(label: "replaced")
   end
 
 end
