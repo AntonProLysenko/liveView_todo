@@ -42,8 +42,8 @@ defmodule LiveViewTodoWeb.ItemState do
         end
       end)
       # IO.inspect("MAYBE HERE??????")
-    PubSub.broadcast(LiveViewTodo.PubSub, topic(), {:items, updated_items})
-    {:reply, updated_items, updated_items}
+    PubSub.broadcast(LiveViewTodo.PubSub, topic(), {:items, Item.list_items()})
+    {:reply, updated_items, Item.list_items()}
   end
 
 end

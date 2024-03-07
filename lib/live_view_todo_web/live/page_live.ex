@@ -30,6 +30,7 @@ defmodule LiveViewTodoWeb.PageLive do
     Item.create_item(%{text: text})
     socket = assign(socket, items: get_all_sorted_items(), active: %Item{})
     LiveViewTodoWeb.Endpoint.broadcast_from(self(), @topic, "update", socket.assigns)
+    PubSub.broadcast(LiveViewTodo.PubSub, @topic, socket.assigns)
     {:noreply, socket}
   end
 
@@ -71,7 +72,14 @@ defmodule LiveViewTodoWeb.PageLive do
 
 
   def handle_info({:items, items}, socket) do
-    {:noreply, assign(socket, val: items)}
+    {:noreply, assign(socket, items: items)}
+  end
+
+  # def handle_info({:active, item, :items, items}, socket) do
+  #   {:noreply, assign(socket, items: items)}
+  # end
+  def handle_info(%{event: "update", payload: %{active: item, items: items}}, socket) do
+    {:noreply, assign(socket, items: items)}
   end
   @impl true
   def handle_info(%{event: "update", payload: %{items: items}}, socket) do
