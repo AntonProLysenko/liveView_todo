@@ -1,8 +1,10 @@
 defmodule LiveViewTodoWeb.ItemComponent do
   use LiveViewTodoWeb, :live_component
+  alias LiveViewTodoWeb.ItemState
   alias LiveViewTodo.Item
 
-  @topic "live"
+
+  @topic ItemState.topic()
 
   @impl true
   def render(assigns) do
@@ -27,9 +29,9 @@ defmodule LiveViewTodoWeb.ItemComponent do
           <li data-id={item.id} class={completed?(item)}>
             <div class="view">
               <%= if checked?(item) do %>
-                <input class="toggle" type="checkbox" phx-target={@myself} phx-value-id={item.id} phx-click="toggle" checked />
+                <input class="toggle" type="checkbox"  phx-value-id={item.id} phx-click="toggle" checked />
               <% else %>
-                <input class="toggle" type="checkbox" phx-target={@myself} phx-value-id={item.id} phx-click="toggle" />
+                <input class="toggle" type="checkbox"  phx-value-id={item.id} phx-click="toggle" />
               <% end %>
               <label phx-click="edit-item" phx-target={@myself} phx-value-id={item.id}><%= item.text %></label>
               <button class="destroy" phx-target={@myself} phx-click="delete" phx-value-id={item.id}></button>
@@ -43,17 +45,7 @@ defmodule LiveViewTodoWeb.ItemComponent do
   end
 
 
-  @impl true
-  def handle_event("toggle", data, socket) do
-    status = if Map.has_key?(data, "value"), do: 1, else: 0
-    item = Item.get_item!(Map.get(data, "id"))
 
-    Item.update_item(item, %{id: item.id, status: status})
-
-    socket = assign(socket, items: Item.list_items(), active: %Item{})
-    LiveViewTodoWeb.Endpoint.broadcast(@topic, "update", socket.assigns)
-    {:noreply, socket}
-  end
 
 
 

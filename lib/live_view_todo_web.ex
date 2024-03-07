@@ -55,6 +55,7 @@ defmodule LiveViewTodoWeb do
       use Phoenix.LiveView,
         layout: {LiveViewTodoWeb.Layouts, :app}
       alias LiveViewTodoWeb.Router.Helpers, as: Routes
+      alias LiveViewTodo.PubSub
       unquote(html_helpers())
     end
   end
@@ -63,6 +64,7 @@ defmodule LiveViewTodoWeb do
     quote do
       use Phoenix.LiveComponent
       alias LiveViewTodoWeb.Router.Helpers, as: Routes
+      alias LiveViewTodo.PubSub
       unquote(html_helpers())
     end
   end

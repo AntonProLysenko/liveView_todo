@@ -10,13 +10,14 @@ defmodule LiveViewTodo.Application do
     children = [
       LiveViewTodoWeb.Telemetry,
       LiveViewTodo.Repo,
+      LiveViewTodoWeb.ItemState,
       {DNSCluster, query: Application.get_env(:live_view_todo, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: LiveViewTodo.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: LiveViewTodo.Finch},
       # Start a worker by calling: LiveViewTodo.Worker.start_link(arg)
       # {LiveViewTodo.Worker, arg},
       # Start to serve requests, typically the last entry
+      {Phoenix.PubSub, name: LiveViewTodo.PubSub},
       LiveViewTodoWeb.Endpoint
     ]
 

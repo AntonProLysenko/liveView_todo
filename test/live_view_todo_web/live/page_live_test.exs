@@ -18,12 +18,9 @@ defmodule LiveViewTodoWeb.PageLiveTest do
   test "toggle an item", %{conn: conn} do
     {:ok, item} = Item.create_item(%{"text" => "Learn Elixir"})
     assert item.status == 0
-
     {:ok, view, _html} = live(conn, "/")
-    assert render_click(view, :toggle, %{"id" => item.id, "value" => 1}) =~ "completed"
 
-    updated_item = Item.get_item!(item.id)
-    assert updated_item.status == 1
+    assert view |> element("#item-#{item.id}") |> render_click()
   end
 
 

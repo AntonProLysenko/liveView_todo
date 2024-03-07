@@ -2,9 +2,11 @@ defmodule LiveViewTodoWeb.PageLive do
   @moduledoc """
   This module is implementation of PageLive in router
   """
+  alias Phoenix.PubSub
   use LiveViewTodoWeb, :live_view
+  alias Phoenix.PubSub
   alias LiveViewTodo.Item
-
+  alias LiveViewTodoWeb.ItemState
 
   @topic "live"
 
@@ -17,7 +19,7 @@ defmodule LiveViewTodoWeb.PageLive do
     # our app know which html file to render by it's name the same name as this module with the extention .html.heex
 
     # subscribe to the channel
-    if connected?(socket), do: LiveViewTodoWeb.Endpoint.subscribe(@topic)
+    if connected?(socket), do: LiveViewTodoWeb.Endpoint.subscribe(@topic); PubSub.subscribe(LiveViewTodo.PubSub, @topic)
     #adding Items to assigns
 
     {:ok, assign(socket, items: Item.list_items(), editing: nil, tab: "all")}# socket is a liveView Socket that passes the endpoint for liveView todo web
@@ -29,6 +31,20 @@ defmodule LiveViewTodoWeb.PageLive do
     socket = assign(socket, items: get_all_sorted_items(), active: %Item{})
     LiveViewTodoWeb.Endpoint.broadcast_from(self(), @topic, "update", socket.assigns)
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("toggle", data, socket) do
+    # IO.inspect(data, label: "data")
+    # status = if Map.has_key?(data, "value"), do: 1, else: 0
+    # item = Item.get_item!(Map.get(data, "id"))
+
+    # Item.update_item(item, %{id: item.id, status: status})
+
+    # socket = assign(socket, items: Item.list_items(), active: %Item{})
+    # LiveViewTodoWeb.Endpoint.broadcast(@topic, "update", socket.assigns)
+    # # {:noreply, socket}
+    {:noreply, assign(socket, :items, ItemState.toggle(data))}
   end
 
 
@@ -53,6 +69,10 @@ defmodule LiveViewTodoWeb.PageLive do
     end
   end
 
+
+  def handle_info({:items, items}, socket) do
+    {:noreply, assign(socket, val: items)}
+  end
   @impl true
   def handle_info(%{event: "update", payload: %{items: items}}, socket) do
     {:noreply, assign(socket, items: items)}
